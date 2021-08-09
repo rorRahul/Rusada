@@ -1,0 +1,86 @@
+﻿@model Rusada.Models.AirlistViewModel
+@{
+    ViewBag.Title = "AirCraft Details";
+}
+<div style="width: 100%; height: 3px; background-color: gray; margin-bottom: 5px;"></div>
+<section class="content">
+    <a name="id3" />
+    <div class="box box-warning">
+        <div class="box-header with-border">
+            <h3 class="box-title">AirCraft Info</h3>
+        </div><!-- /.box-header -->
+        <div class="box-body">
+
+            <form role="form" id="frmAircraftinfo">
+                @Html.AntiForgeryToken()
+
+                <div class="form-group" id="div_account">
+                    <div class="row">
+                        <div class="col-lg-6 col-xs-6">
+                            <label class="control-label">Make<span class="text-red">*</span></label>
+                            @Html.TextBoxFor(m => m.Make, new { @class = "form-control", @data_required = "Y" })
+                        </div>
+                        <div class="col-lg-6 col-xs-4">
+                            <label class="control-label">Model<span class="text-red">*</span></label>
+                            @Html.TextBoxFor(m => m.Model, new { @class = "form-control", @data_required = "Y" })
+                        </div>
+                        <div class="col-lg-6 col-xs-4">
+                            <label class="control-label">Registration<span class="text-red">*</span></label>
+                            @Html.TextBoxFor(m => m.Registration, new { @class = "form-control", @data_required = "Y" })
+                        </div>
+                        <div class="col-lg-6 col-xs-6">
+                            <label class="control-label">Location<span class="text-red">*</span></label>
+                            @Html.TextBoxFor(m => m.Location, new { @class = "form-control", @data_required = "Y" })
+                        </div>
+                        <div class="col-lg-6 col-xs-6">
+                            <label class="control-label">Date and Time</label>
+                            @Html.TextBoxFor(m => m.Modelyear, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+                <!-- text input -->
+              
+
+                <input type="hidden" id="PlanID" name="PlanID" value="@Model.PlanID" />
+                <div class="form-group">
+                    <div class="col-lg-12 col-xs-12" style="text-align:right;">
+                        <input type="button" class="btn btn-primary btn-lg" title="Update" value="Save" onclick="SaveairCraftDetails()" style="margin-right:10px;" />
+                        <input type="button" class="btn btn-primary btn-lg" title="Cancel" value="Cancel" onclick="ReloadAirList();" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<script>
+    function ReloadAirList() {
+        LoadContents("AirDetail", "Air", { AirID: $("#dt_airlist tbody tr:first").attr('id'), ActiveAction: "Edit" }, "div_AirlstDetail");
+    }
+    function SaveairCraftDetails() {
+        var postData = $("#frmAircraftinfo").serializeArray();
+        var formURL = "";
+        if ($('#PlanID').val() == '0') {
+            formURL= '@Url.Action("RegisterNew", "Air")';
+        } else {
+            formURL = '@Url.Action("UpdateAirCraftDetail", "Air")';
+        }
+        $.ajax({
+            url: formURL,
+            method: "POST",
+            data: postData,
+            success: function (data) {
+
+                ShowNotification("AirCraft Details saved successfully.", "success");
+               // $("#div_rusada").empty();
+                LoadContents("AirCraftList", "Air");
+                window.location.reload(true);
+                
+            },
+            error: function (data) {
+                alert("Error :" + data);
+            }
+        });
+    }
+</script>
+

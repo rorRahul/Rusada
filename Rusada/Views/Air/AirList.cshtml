@@ -1,0 +1,113 @@
+﻿@model Rusada.Models.AirCraftListmodel
+
+@{
+    ViewBag.Title = "AirCraft List";
+    Layout = null;
+}
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+<div id="div_rusada">
+<div id="enlarge" style="margin: 0; padding: 0; position: fixed; right: 0px; top: 0px; width: 100%; height: 100%; background-color: rgba(0,0,0,0.1); z-index: 30001;">
+    <div id="fade">
+    </div>
+    <div style="color: White; width: 70px; height: 70px; position: absolute; margin: auto; right: 0; left: 0; top: 200px; z-index: 30002">
+        <img src="~/img/ajax-loader.gif" style="width:70px" />
+    </div>
+</div>
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Air Details</h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+            <div class="row" id="div_addair">
+                <div class="col-sm-10"></div>
+                <div class="col-sm-2">
+                    <button id="addair" type="button" class="btn btn-block btn-success">Add Aircraft</button>
+                </div>
+            </div>
+            <div class="row"></br></div>
+            <div class="row">
+                <div class="col-sm-12">
+
+                    <table id="dt_airlist" class="table table-bordered table-striped dataTable" role="grid">
+                        <thead>
+                            <tr role="row">
+                                <th data-class="expand" class="sorting_asc"> Make</th>
+                                <th data-hide="phone,tablet" class="sorting_asc"> Model</th>
+                                <th data-hide="phone,tablet" class="sorting_asc">Registration</th>
+                                <th data-hide="phone,tablet" class="sorting_asc"> Location</th>
+                                <th data-hide="phone,tablet" class="sorting_asc">
+                                    Date and time
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.AirListModel)
+                            {
+                                <tr style="cursor:pointer" id="@row.PlanID" onclick="PopulateURDetail(this);">
+                                    <td>@row.Make</td>
+                                    <td>@row.Model</td>
+                                    <td>@row.Registration</td>
+                                    <td>@row.Location</td>
+                                    <td>@row.Modelyear</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- /.box-body -->
+    <div>
+        <div class="widget-body" id="div_AirlstDetail">
+        </div>
+    </div>
+</div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/Rusada")
+
+
+<input type="hidden" id="ID" name="ID" value="" />
+<input type="hidden" id="LastSelectedRowId" name="LastSelectedRowId" value="" />
+<script>
+
+    var PreviousURRow = null;
+
+    $(document).ready(function () {
+        // pageSetUp();
+       // common_datatables_ready('dt_airlist');
+        if ($("#LastSelectedRowId").val() == "") { $("#LastSelectedRowId").val($("#dt_airlist tbody tr:first").attr('id')); }
+
+        var eleTR = document.getElementById($("#LastSelectedRowId").val());
+
+        $("#LastSelectedRowId").val("");
+
+        if (eleTR) {
+            PreviousURRow = eleTR;
+            PopulateURDetail(eleTR);
+        }
+    });
+    function PopulateURDetail(eleTR) {
+        if (PreviousURRow != null) {
+            $(PreviousURRow).removeClass("active");
+        }
+        PreviousURRow = eleTR;
+        $(eleTR).addClass("active");
+        LoadContents("AirDetail", "Air", { AirID: eleTR.id, ActiveAction: "Edit" }, "div_AirlstDetail");
+    }
+    $('#addair').click(function () {
+        LoadContents("AirDetail", "Air", { AirID: "0", ActiveAction: "New" }, "div_AirlstDetail");
+    });
+</script>
+
